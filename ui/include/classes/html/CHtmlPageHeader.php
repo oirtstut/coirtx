@@ -127,12 +127,11 @@ class CHtmlPageHeader {
 				<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
 				<meta charset="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1">
-				<meta name="Author" content="Zabbix SIA" />
+				<meta name="Author" content="<?= CHtml::encode(CBrandHelper::getCompanyName()) ?>" />
 		HTML;
 
-		if ($this->title !== '') {
-			echo (new CTag('title', true))->addItem($this->title);
-		}
+		echo (new CTag('title', true))
+		        ->addItem(CBrandHelper::getBrowserTitle($this->title));
 
 		echo <<<HTML
 				<link rel="icon" href="favicon.ico">
