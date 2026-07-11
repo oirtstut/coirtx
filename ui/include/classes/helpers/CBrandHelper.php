@@ -18,7 +18,11 @@
  * A class for Zabbix re-branding.
  */
 class CBrandHelper {
-
+	private const DEFAULT_PRODUCT_NAME = 'Zabbix';
+	private const DEFAULT_PRODUCT_FULL_NAME = 'Zabbix Monitoring';
+	private const DEFAULT_COMPANY_NAME = 'Zabbix SIA';
+	private const DEFAULT_VENDOR_URL = 'https://www.zabbix.com/';
+	
 	const BRAND_CONFIG_FILE_PATH = '/../../../local/conf/brand.conf.php';
 
 	/**
@@ -68,6 +72,57 @@ class CBrandHelper {
 	 */
 	public static function isRebranded() {
 		return self::getValue('IS_REBRANDED');
+	}
+
+        /**
+         * Get product name.
+         *
+         * @return string
+         */
+	public static function getProductName(): string {
+	    return self::getValue('BRAND_PRODUCT_NAME', self::DEFAULT_PRODUCT_NAME);
+	}
+
+        /**
+         * Get full product name.
+         *
+         * @return string
+         */
+	public static function getProductFullName(): string {
+	    return self::getValue('BRAND_PRODUCT_FULL_NAME', self::DEFAULT_PRODUCT_FULL_NAME);
+	}
+
+        /**
+         * Get company name.
+         *
+         * @return string
+         */
+	public static function getCompanyName(): string {
+	    return self::getValue('BRAND_COMPANY_NAME', self::DEFAULT_COMPANY_NAME);
+	}
+
+        /**
+         * Get vendor URL.
+         *
+         * @return string
+         */
+	public static function getVendorUrl(): string {
+	    return self::getValue('BRAND_VENDOR_URL', self::DEFAULT_VENDOR_URL);
+	}
+
+        /**
+         * Get browser title.
+         *
+         * @param string $page_title
+         *
+         * @return string
+         */
+	public static function getBrowserTitle(string $page_title): string {
+	    $product = self::getProductName();
+
+	    return $page_title !== ''
+        	? "{$page_title} - {$product}"
+	        : $product;
 	}
 
 	/**
