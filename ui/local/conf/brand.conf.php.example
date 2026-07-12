@@ -23,9 +23,9 @@ return [
      *
      * Paths are relative to the Zabbix UI root.
      */
-    'BRAND_LOGO' => 'assets/img/coirtx-logo.svg',
-    'BRAND_LOGO_SIDEBAR' => 'assets/img/coirtx-logo.svg',
-    'BRAND_LOGO_SIDEBAR_COMPACT' => 'assets/img/coirtx-logo-compact.svg',
+    'BRAND_LOGO' => 'assets/img/logo.svg',
+    'BRAND_LOGO_SIDEBAR' => 'assets/img/logo.svg',
+    'BRAND_LOGO_SIDEBAR_COMPACT' => 'assets/img/logo-compact.svg',
 
     /*
      * Footer
