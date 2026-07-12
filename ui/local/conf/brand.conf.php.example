@@ -17,4 +17,22 @@ return [
      * Documentation
      */
     'BRAND_HELP_URL' => 'https://docs.oirt.example',
+
+    /*
+     * Logos
+     *
+     * Paths are relative to the Zabbix UI root.
+     */
+    'BRAND_LOGO' => 'assets/img/coirtx-logo.svg',
+    'BRAND_LOGO_SIDEBAR' => 'assets/img/coirtx-logo.svg',
+    'BRAND_LOGO_SIDEBAR_COMPACT' => 'assets/img/coirtx-logo-compact.svg',
+
+    /*
+     * Footer
+     */
+    'BRAND_FOOTER' => [
+        'COIRTX Network Monitoring Platform ',
+        ZABBIX_VERSION,
+        '.'
+    ],
 ];

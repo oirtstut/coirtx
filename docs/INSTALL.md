@@ -109,3 +109,57 @@ Future releases may change the default password during installation.
 - Configure discovery
 
 See the Administrator Guide.
+
+
+# Create the service
+
+Create the service:
+
+sudo nano /etc/systemd/system/coirtx-server.service
+
+Paste this:
+
+[Unit]
+Description=COIRTX Server
+Documentation=https://www.zabbix.com/documentation/
+After=network-online.target mariadb.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/opt/coirtx/sbin/zabbix_server -c /etc/coirtx/zabbix_server.conf -f
+Restart=on-failure
+RestartSec=5
+
+# Optional hardening
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
+Then enable and start it:
+
+sudo systemctl daemon-reload
+sudo systemctl enable coirtx-server
+sudo systemctl start coirtx-server
+
+Verify:
+
+systemctl status coirtx-server
+
+You should see something like:
+
+● coirtx-server.service - COIRTX Server
+     Loaded: loaded (/etc/systemd/system/coirtx-server.service; enabled)
+     Active: active (running)
+
+You can also confirm it's enabled for boot:
+
+systemctl is-enabled coirtx-server
+
+Expected output:
+
+enabled
