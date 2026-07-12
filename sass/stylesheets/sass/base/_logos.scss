@@ -7,6 +7,11 @@ div.zabbix-logo {
 	background: url("data:image/svg+xml;base64,#{$zabbix-logo}") no-repeat;
 	background-size: contain;
 }
+img.zabbix-logo {
+    width: 114px;
+    height: 30px;
+    object-fit: contain;
+}
 
 div.zabbix-logo-sidebar {
 	width: 91px;
@@ -15,8 +20,20 @@ div.zabbix-logo-sidebar {
 	background-size: contain;
 }
 
+img.zabbix-logo-sidebar {
+    width: 91px;
+    height: 24px;
+    object-fit: contain;
+}
+
 div.zabbix-logo-sidebar-compact {
 	width: 24px;
 	height: 24px;
 	background: url("data:image/svg+xml;base64,#{$zabbix-logo-compact}") no-repeat;
+}
+
+img.zabbix-logo-sidebar-compact {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
 }
