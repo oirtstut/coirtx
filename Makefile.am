@@ -119,6 +119,9 @@ css_images:
 	cp sass/ms-tile-144x144.png ui/assets/img/
 	cp sass/touch-icon-192x192.png ui/assets/img/
 	cp sass/favicon.ico ui/
+	cp sass/logo.svg ui/assets/img/
+	cp sass/logo-sidebar.svg ui/assets/img/
+	cp sass/logo-compact.svg ui/assets/img/
 
 icons_build:
 	cd sass/icons && \
