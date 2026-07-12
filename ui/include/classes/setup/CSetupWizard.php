@@ -483,7 +483,7 @@ class CSetupWizard extends CForm {
 
 	private function stageWelcome(): array {
 		preg_match('/^\d+\.\d+/', ZABBIX_VERSION, $version);
-		$setup_title = (new CDiv([new CSpan(_('Welcome to')), 'Zabbix '.$version[0]]))->addClass(ZBX_STYLE_SETUP_TITLE);
+		$setup_title = (new CDiv([new CSpan(_('Welcome to')), 'COIRTx'.$version[0]]))->addClass(ZBX_STYLE_SETUP_TITLE);
 
 		$default_lang = $this->getConfig('default_lang');
 		$lang_select = (new CSelect('default_lang'))
@@ -831,7 +831,7 @@ class CSetupWizard extends CForm {
 
 		$table = (new CFormGrid())
 			->addItem([
-				new CLabel(_('Zabbix server name')),
+				new CLabel(_('COIRTx server name')),
 				(new CTextBox('zbx_server_name', $this->getConfig('ZBX_SERVER_NAME', '')))
 					->setWidth(ZBX_TEXTAREA_SMALL_WIDTH)
 			])
@@ -1075,7 +1075,7 @@ class CSetupWizard extends CForm {
 			$table
 				->addRow(null)
 				->addRow(
-					(new CSpan(_('Zabbix server name')))->addClass(ZBX_STYLE_GREY),
+					(new CSpan(_('COIRTx server name')))->addClass(ZBX_STYLE_GREY),
 					$this->getConfig('ZBX_SERVER_NAME')
 				);
 		}
@@ -1325,7 +1325,7 @@ class CSetupWizard extends CForm {
 
 		$message_box = null;
 		$message = [
-			(new CTag('h1', true, _('Congratulations! You have successfully installed Zabbix frontend.')))
+			(new CTag('h1', true, _('Congratulations! You have successfully installed COIRTx frontend.')))
 				->addClass(ZBX_STYLE_GREEN),
 			new CTag('p', true, _s('Configuration file "%1$s" created.', ltrim(CConfigFile::CONFIG_FILE_PATH, '/')))
 		];

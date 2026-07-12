@@ -48,7 +48,7 @@ if (array_key_exists('serverid', $data) && $data['serverid'] !== '') {
 }
 
 $info_table->addRow([
-	_('Zabbix server is running'),
+	_('COIRTx server is running'),
 	(new CSpan($status['is_running'] ? _('Yes') : _('No')))
 		->addClass($status['is_running'] ? ZBX_STYLE_COLOR_POSITIVE : ZBX_STYLE_COLOR_NEGATIVE),
 	$data['system_info']['server_details']
@@ -102,14 +102,14 @@ if ($data['system_info']['is_software_update_check_enabled']) {
 
 if ($data['user_type'] == USER_TYPE_ZABBIX_ADMIN || $data['user_type'] == USER_TYPE_SUPER_ADMIN) {
 	$info_table->addRow([
-		_('Zabbix server version'),
+		_('COIRTx server version'),
 		$server_version,
 		$server_version_details
 	]);
 }
 
 $info_table->addRow([
-	_('Zabbix frontend version'),
+	_('COIRTx frontend version'),
 	$frontend_version,
 	$frontend_version_details
 ]);

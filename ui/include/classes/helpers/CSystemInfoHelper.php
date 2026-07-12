@@ -222,11 +222,11 @@ class CSystemInfoHelper {
 				'value' => time()
 			],
 			'serverid' => [
-				'id' => _('Zabbix server ID'),
+				'id' => _('COIRTx server ID'),
 				'value' => CSettingsHelper::get(CSettingsHelper::SERVER_ID)
 			],
 			'server_running' => [
-				'id' => _('Zabbix server is running'),
+				'id' => _('COIRTx server is running'),
 				'value' => $status['is_running'],
 				'details' => [
 					'has_status' => $status['has_status'],
@@ -236,14 +236,14 @@ class CSystemInfoHelper {
 				]
 			],
 			'server_version' => [
-				'id' => _('Zabbix server version'),
+				'id' => _('COIRTx server version'),
 				'value' => $status['server_version'],
 				'details' => [
 					'outdated' => null
 				]
 			],
 			'frontend_version' => [
-				'id' => _('Zabbix frontend version'),
+				'id' => _('COIRTx frontend version'),
 				'value' => ZABBIX_VERSION,
 				'details' => [
 					'update_check_enabled' => $system_info['is_software_update_check_enabled'],
@@ -299,7 +299,7 @@ class CSystemInfoHelper {
 				'value' => $status['vps_total'] !== null ? round($status['vps_total'], 2) : null
 			],
 			'global_scripts' => [
-				'id' => _('Global scripts on Zabbix server'),
+				'id' => _('Global scripts on COIRTx server'),
 				'value' => $system_info['is_global_scripts_enabled']
 			],
 			'history_primary_key' => [
