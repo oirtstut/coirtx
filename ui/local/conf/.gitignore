@@ -1,4 +1,8 @@
 # Ignore everything in this directory
 *
+
 # Except this file
 !.gitignore
+
+# Keep the example configuration in Git
+!brand.conf.php.example
