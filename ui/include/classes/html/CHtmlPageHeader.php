@@ -130,8 +130,10 @@ class CHtmlPageHeader {
 				<meta name="Author" content="<?= CHtml::encode(CBrandHelper::getCompanyName()) ?>" />
 		HTML;
 
-		echo (new CTag('title', true))
+		if ($this->title !== '') {
+		    echo (new CTag('title', true))
 		        ->addItem(CBrandHelper::getBrowserTitle($this->title));
+		}
 
 		echo <<<HTML
 				<link rel="icon" href="favicon.ico">
