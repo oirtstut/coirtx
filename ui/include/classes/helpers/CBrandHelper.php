@@ -18,10 +18,10 @@
  * A class for Zabbix re-branding.
  */
 class CBrandHelper {
-	private const DEFAULT_PRODUCT_NAME = 'Zabbix';
-	private const DEFAULT_PRODUCT_FULL_NAME = 'Zabbix Monitoring';
-	private const DEFAULT_COMPANY_NAME = 'Zabbix SIA';
-	private const DEFAULT_VENDOR_URL = 'https://www.zabbix.com/';
+	private const DEFAULT_PRODUCT_NAME = 'Coirtx';
+	private const DEFAULT_PRODUCT_FULL_NAME = 'Coirtx Monitoring';
+	private const DEFAULT_COMPANY_NAME = 'Oirt SI';
+	private const DEFAULT_VENDOR_URL = 'https://www.oirtsix.com/';
 	
 	const BRAND_CONFIG_FILE_PATH = '/../../../local/conf/brand.conf.php';
 
@@ -131,7 +131,7 @@ class CBrandHelper {
 	 * @return string
 	 */
 	public static function getHelpUrl() {
-		return self::getValue('BRAND_HELP_URL', 'https://www.zabbix.com/documentation/'.
+		return self::getValue('BRAND_HELP_URL', 'https://www.oirtsix.com/documentation/'.
 			(preg_match('/^\d+\.\d+/', ZABBIX_VERSION, $version) ? $version[0].'/' : '')
 		);
 	}
