@@ -2584,7 +2584,7 @@ echo
 echo "***********************************************************"
 echo "*            Now run '${am_make} install'                       *"
 echo "*                                                         *"
-echo "*            Thank you for using Zabbix!                  *"
-echo "*              <https://www.zabbix.com>                   *"
+echo "*            Thank you for using Coirtx!                  *"
+echo "*              <https://www.oirtsix.com>                   *"
 echo "***********************************************************"
 echo
