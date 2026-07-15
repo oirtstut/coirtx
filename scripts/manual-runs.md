@@ -1,7 +1,7 @@
 # Manually run the below code before running post-inst.sh
 
 
-./bootstrap
+./bootstrap.sh
 
  ./configure \
      --prefix=/opt/coirtx \

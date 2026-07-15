@@ -718,6 +718,18 @@ echo
 
 
 ###############################################################################
+# Create Directories for CONFIGURATION
+###############################################################################
+
+sudo mkdir -p "${PREFIX}/alertscripts"
+sudo mkdir -p "${PREFIX}/externalscripts"
+sudo mkdir -p "${PREFIX}/lib/modules"
+
+sudo chown -R "${SERVICE_USER}:${SERVICE_GROUP}" \
+    "${PREFIX}/alertscripts" \
+    "${PREFIX}/externalscripts"
+
+###############################################################################
 # SERVER CONFIGURATION
 ###############################################################################
 
@@ -725,10 +737,6 @@ info "Configuring server..."
 
 SERVER_CONF="${SYSCONFDIR}/zabbix_server.conf"
 
-###############################################################################
-#
-# Create configuration only if it does not already exist
-#
 if [[ ! -f "${SERVER_CONF}" ]]; then
 
     info "Creating ${SERVER_CONF}..."
@@ -738,65 +746,79 @@ cat > "${SERVER_CONF}" <<EOF
 #
 # Coirtx Server Configuration
 #
+# Generated automatically by install.sh
+#
 ##############################################################################
 
-############ GENERAL ##########################################################
+############################ GENERAL ##########################################
 
 LogFile=${LOGDIR}/zabbix_server.log
-
 LogFileSize=10
 
 PidFile=${RUNDIR}/zabbix_server.pid
 
 User=${SERVICE_USER}
 
-############ DATABASE #########################################################
+############################ NETWORK ##########################################
+
+ListenPort=10051
+
+############################ DATABASE #########################################
 
 DBHost=${DB_HOST}
-
 DBPort=${DB_PORT}
 
 DBName=${DB_NAME}
-
 DBUser=${DB_USER}
-
 DBPassword=${DB_PASSWORD}
 
-############ CACHE ############################################################
+############################ CACHE ############################################
 
 CacheSize=128M
-
 HistoryCacheSize=32M
-
 HistoryIndexCacheSize=16M
-
 TrendCacheSize=32M
-
 ValueCacheSize=64M
 
-############ POLLERS ##########################################################
+############################ POLLERS ##########################################
 
 StartPollers=10
-
 StartPingers=5
-
 StartDiscoverers=5
-
 StartHTTPPollers=5
+StartPollersUnreachable=2
+StartTrappers=5
+StartPreprocessors=8
+StartDBSyncers=4
 
-############ HOUSEKEEPING #####################################################
+############################ HOUSEKEEPING #####################################
 
 HousekeepingFrequency=1
-
 MaxHousekeeperDelete=5000
 
-############ TIMEOUT ##########################################################
+############################ HISTORY ##########################################
+
+HistoryStorageDateIndex=1
+
+############################ TIMEOUT ##########################################
 
 Timeout=4
 
-############ LOGGING ##########################################################
+############################ LOGGING ##########################################
 
 DebugLevel=3
+
+############################ ALERTS ###########################################
+
+AlertScriptsPath=${PREFIX}/alertscripts
+
+############################ EXTERNAL SCRIPTS #################################
+
+ExternalScripts=${PREFIX}/externalscripts
+
+############################ MODULES ##########################################
+
+LoadModulePath=${PREFIX}/lib/modules
 
 EOF
 
@@ -810,6 +832,13 @@ fi
 
 echo
 
+info "Verifying server configuration..."
+
+grep -E \
+'^(LogFile|PidFile|User|ListenPort|DBHost|DBPort|DBName|DBUser|LoadModulePath|AlertScriptsPath|ExternalScripts)' \
+"${SERVER_CONF}"
+
+echo
 
 ###############################################################################
 # PHP CONFIGURATION
