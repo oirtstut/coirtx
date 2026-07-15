@@ -104,8 +104,13 @@ sudo nginx -t && sudo systemctl reload nginx || true
 echo
 echo "Removing systemd service..."
 
+sudo systemctl disable "${SYSTEMD_SERVICE}" 2>/dev/null || true
+
 sudo rm -f "/etc/systemd/system/${SYSTEMD_SERVICE}"
+sudo rm -f "/etc/systemd/system/multi-user.target.wants/${SYSTEMD_SERVICE}"
+
 sudo systemctl daemon-reload
+sudo systemctl reset-failed
 
 ###############################################################################
 
