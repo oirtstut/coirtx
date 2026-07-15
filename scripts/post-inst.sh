@@ -6,6 +6,8 @@
 #
 # Run AFTER:
 #
+#./bootstrap
+#
 # ./configure \
 #     --prefix=/opt/coirtx \
 #     --sysconfdir=/etc/coirtx \
@@ -1028,7 +1030,8 @@ User=${SERVICE_USER}
 Group=${SERVICE_GROUP}
 
 ExecStart=${PREFIX}/sbin/zabbix_server \
-    -c ${SYSCONFDIR}/zabbix_server.conf
+    -c ${SYSCONFDIR}/zabbix_server.conf \
+    -f
 
 ExecReload=/bin/kill -HUP \$MAINPID
 

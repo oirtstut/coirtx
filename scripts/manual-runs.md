@@ -1,5 +1,8 @@
 # Manually run the below code before running post-inst.sh
 
+
+./bootstrap
+
  ./configure \
      --prefix=/opt/coirtx \
      --sysconfdir=/etc/coirtx \
@@ -15,8 +18,8 @@
      --with-ssh2 \
      --with-openssl
 
-     make -j$(nproc)
+make -j$(nproc)
 
-     sudo make install
+sudo make install
 
-     make dbschema
+make dbschema
