@@ -42,6 +42,19 @@ set -Eeuo pipefail
 APP_NAME="coirtx"
 
 #
+# Display name (used by systemd)
+#
+HOST_DISPLAY_NAME="Coirtx Server"
+
+#
+# Must exactly match the Host name in the Coirtx frontend
+#
+AGENT_HOSTNAME="Coirtx server"
+
+SERVER_SERVICE="${APP_NAME}-server"
+AGENT2_SERVICE="${APP_NAME}-agent2"
+
+#
 # Installation
 #
 PREFIX="/opt/${APP_NAME}"
@@ -201,7 +214,7 @@ success "Required commands found."
 SERVER_BIN="${PREFIX}/sbin/zabbix_server"
 
 if [[ ! -x "${SERVER_BIN}" ]]; then
-    error "Ktrix/Coirtx does not appear to be installed."
+    error "Coirtx does not appear to be installed."
 
     echo
     echo "Expected:"
@@ -466,6 +479,19 @@ chmod 755 "${RUNDIR}"
 success "Ownership configured."
 
 ###############################################################################
+# Create initial log files
+###############################################################################
+
+touch "${LOGDIR}/zabbix_server.log"
+touch "${LOGDIR}/zabbix_agent2.log"
+
+chown "${SERVICE_USER}:${SERVICE_GROUP}" \
+    "${LOGDIR}/zabbix_server.log" \
+    "${LOGDIR}/zabbix_agent2.log"
+
+success "Log files created."
+
+###############################################################################
 # VERIFY INSTALLATION
 ###############################################################################
 
@@ -559,6 +585,22 @@ OWNER TO ${DB_USER};
 EOF
 
 success "Database ownership verified."
+
+###############################################################################
+# Verify database login
+###############################################################################
+
+info "Testing database connection..."
+
+PGPASSWORD="${DB_PASSWORD}" \
+psql \
+    -h "${DB_HOST}" \
+    -p "${DB_PORT}" \
+    -U "${DB_USER}" \
+    -d "${DB_NAME}" \
+    -c '\q'
+
+success "Database login successful."
 
 ###############################################################################
 
@@ -1046,10 +1088,11 @@ SERVICE_FILE="/etc/systemd/system/${APP_NAME}-server.service"
 
 cat > "${SERVICE_FILE}" <<EOF
 [Unit]
-Description=Coirtx Server
+Description=${HOST_DISPLAY_NAME}
 Documentation=https://github.com/<your-org>/coirtx
 
 After=network-online.target postgresql.service
+Requires=postgresql.service
 Wants=network-online.target
 
 [Service]
@@ -1067,9 +1110,7 @@ ExecReload=/bin/kill -HUP \$MAINPID
 Restart=on-failure
 RestartSec=5
 
-PIDFile=${RUNDIR}/zabbix_server.pid
-
-LimitNOFILE=65535
+WorkingDirectory=${LIBDIR}
 
 NoNewPrivileges=true
 
@@ -1079,7 +1120,9 @@ ProtectSystem=full
 
 ProtectHome=true
 
-WorkingDirectory=${LIBDIR}
+PIDFile=${RUNDIR}/zabbix_server.pid
+
+LimitNOFILE=65535
 
 [Install]
 WantedBy=multi-user.target
@@ -1139,6 +1182,22 @@ if systemctl is-active --quiet "${APP_NAME}-server.service"; then
 
     success "Server is running."
 
+###############################################################################
+# Verify listening port
+###############################################################################
+
+    if ss -ltn | grep -q ":10051 "; then
+
+        success "Server listening on port 10051."
+
+    else
+
+        error "Server is not listening on port 10051."
+
+        exit 1
+
+    fi
+
 else
 
     error "Server failed to start."
@@ -1153,6 +1212,178 @@ fi
 
 echo
 
+
+###############################################################################
+# AGENT2 CONFIGURATION
+###############################################################################
+
+info "Configuring Agent2..."
+
+AGENT2_CONF="${SYSCONFDIR}/zabbix_agent2.conf"
+
+if [[ ! -f "${AGENT2_CONF}" ]]; then
+
+    info "Creating ${AGENT2_CONF}..."
+
+    cp "${PREFIX}/conf/zabbix_agent2.conf" "${AGENT2_CONF}"
+
+fi
+
+###############################################################################
+# Update required settings
+###############################################################################
+
+###############################################################################
+# Helper
+###############################################################################
+
+set_agent2_value() {
+
+    local key="$1"
+    local value="$2"
+
+    if grep -q "^${key}=" "${AGENT2_CONF}"; then
+
+        sed -i "s|^${key}=.*|${key}=${value}|" "${AGENT2_CONF}"
+
+    else
+
+        echo "${key}=${value}" >> "${AGENT2_CONF}"
+
+    fi
+}
+
+###############################################################################
+
+set_agent2_value LogFile "${LOGDIR}/zabbix_agent2.log"
+
+set_agent2_value PidFile "${RUNDIR}/zabbix_agent2.pid"
+
+set_agent2_value ListenPort "10050"
+
+set_agent2_value Server "127.0.0.1"
+
+set_agent2_value ServerActive "127.0.0.1"
+
+set_agent2_value Hostname "${AGENT_HOSTNAME}"
+
+set_agent2_value ControlSocket "${RUNDIR}/agent.sock"
+
+success "Agent2 configured."
+echo
+
+
+###############################################################################
+# AGENT2 SERVICE
+###############################################################################
+
+info "Installing Agent2 systemd service..."
+
+SERVICE_FILE="/etc/systemd/system/${AGENT2_SERVICE}.service"
+
+cat > "${SERVICE_FILE}" <<EOF
+[Unit]
+Description=${HOST_DISPLAY_NAME} Agent2
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+User=${SERVICE_USER}
+Group=${SERVICE_GROUP}
+
+WorkingDirectory=${LIBDIR}
+
+RuntimeDirectory=${APP_NAME}
+RuntimeDirectoryMode=0755
+
+ExecStart=${PREFIX}/sbin/zabbix_agent2 \
+    -c ${SYSCONFDIR}/zabbix_agent2.conf
+
+Restart=on-failure
+RestartSec=5
+
+PIDFile=${RUNDIR}/zabbix_agent2.pid
+
+LimitNOFILE=65535
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+
+systemctl enable "${AGENT2_SERVICE}"
+
+systemctl restart "${AGENT2_SERVICE}"
+
+sleep 2
+
+if systemctl is-active --quiet "${AGENT2_SERVICE}"; then
+
+    success "Agent2 running."
+
+else
+
+    error "Agent2 failed to start."
+
+    journalctl -u "${AGENT2_SERVICE}" -n 50 --no-pager
+
+    exit 1
+
+fi
+
+if ss -ltn | grep -q ":10050 "; then
+
+    success "Agent2 listening on port 10050."
+
+else
+
+    error "Agent2 is not listening on port 10050."
+
+    exit 1
+
+fi
+
+###############################################################################
+# Verify Agent2
+###############################################################################
+
+info "Testing Agent2..."
+
+if "${PREFIX}/sbin/zabbix_agent2" -t agent.hostname >/dev/null; then
+
+    success "Agent2 test passed."
+
+else
+
+    error "Agent2 self-test failed."
+
+    exit 1
+
+fi
+
+###############################################################################
+# Verify web frontend
+###############################################################################
+
+info "Checking web frontend..."
+
+if curl -fs http://127.0.0.1/ >/dev/null; then
+
+    success "Frontend is reachable."
+
+else
+
+    warning "Frontend did not respond."
+
+fi
 
 ###############################################################################
 # INSTALLATION SUMMARY
@@ -1190,12 +1421,15 @@ echo
 echo "Service"
 echo "-------"
 echo
-echo "    systemctl status ${APP_NAME}-server"
+echo "    systemctl status ${SERVER_SERVICE}"
+echo "    systemctl status ${AGENT2_SERVICE}"
 echo
 echo "Logs"
 echo "----"
 echo
 echo "    ${LOGDIR}"
+echo "    Server : ${LOGDIR}/zabbix_server.log"
+echo "    Agent2 : ${LOGDIR}/zabbix_agent2.log"
 echo
 echo "============================================================"
 echo
