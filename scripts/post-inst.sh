@@ -872,12 +872,33 @@ else
 
 fi
 
+###############################################################################
+# Ensure required configuration values
+###############################################################################
+
+set_server_value LogFile "${LOGDIR}/zabbix_server.log"
+set_server_value PidFile "${RUNDIR}/zabbix_server.pid"
+set_server_value User "${SERVICE_USER}"
+
+set_server_value ListenPort "10051"
+
+set_server_value DBHost "${DB_HOST}"
+set_server_value DBPort "${DB_PORT}"
+
+set_server_value DBName "${DB_NAME}"
+set_server_value DBUser "${DB_USER}"
+set_server_value DBPassword "${DB_PASSWORD}"
+
+set_server_value AlertScriptsPath "${PREFIX}/alertscripts"
+set_server_value ExternalScripts "${PREFIX}/externalscripts"
+set_server_value LoadModulePath "${PREFIX}/lib/modules"
+
 echo
 
 info "Verifying server configuration..."
 
 grep -E \
-'^(LogFile|PidFile|User|ListenPort|DBHost|DBPort|DBName|DBUser|LoadModulePath|AlertScriptsPath|ExternalScripts)' \
+'^(LogFile|PidFile|User|ListenPort|DBHost|DBPort|DBName|DBUser|DBPassword|LoadModulePath|AlertScriptsPath|ExternalScripts)' \
 "${SERVER_CONF}"
 
 echo
@@ -1249,6 +1270,26 @@ set_agent2_value() {
     else
 
         echo "${key}=${value}" >> "${AGENT2_CONF}"
+
+    fi
+}
+
+###############################################################################
+# Server configuration helper
+###############################################################################
+
+set_server_value() {
+
+    local key="$1"
+    local value="$2"
+
+    if grep -q "^${key}=" "${SERVER_CONF}"; then
+
+        sed -i "s|^${key}=.*|${key}=${value}|" "${SERVER_CONF}"
+
+    else
+
+        echo "${key}=${value}" >> "${SERVER_CONF}"
 
     fi
 }
