@@ -33,6 +33,21 @@ class CUrl {
 			$this->url = basename($_SERVER['SCRIPT_NAME']);
 		}
 		else {
+			// Normalize frontend entry script.
+			/* if ($url === 'zabbix.php') { */
+			/* 	$url = CBrandHelper::FRONTEND_ENTRY; */
+			/* } */
+
+			if (str_starts_with($url, CBrandHelper::LEGACY_FRONTEND_ENTRY)) {
+ 				$url = CBrandHelper::FRONTEND_ENTRY
+        			. substr($url, strlen(CBrandHelper::LEGACY_FRONTEND_ENTRY));
+			}
+
+			/* if (str_starts_with($url, 'zabbix.php')) { */
+			/* 	$url = CBrandHelper::FRONTEND_ENTRY . substr($url, strlen('zabbix.php')); */
+			/* } */
+
+
 			$this->url = $url;
 
 			// parse reference
