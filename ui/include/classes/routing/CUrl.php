@@ -38,8 +38,16 @@ class CUrl {
 			/* 	$url = CBrandHelper::FRONTEND_ENTRY; */
 			/* } */
 
-			if (str_starts_with($url, CBrandHelper::LEGACY_FRONTEND_ENTRY)) {
- 				$url = CBrandHelper::FRONTEND_ENTRY
+			/* if (str_starts_with($url, CBrandHelper::LEGACY_FRONTEND_ENTRY)) { */
+			/* 		$url = CBrandHelper::FRONTEND_ENTRY */
+			/*      			. substr($url, strlen(CBrandHelper::LEGACY_FRONTEND_ENTRY)); */
+			/* } */
+
+			if ($url === CBrandHelper::LEGACY_FRONTEND_ENTRY) {
+				$url = CBrandHelper::FRONTEND_ENTRY;
+			}
+			elseif (str_starts_with($url, CBrandHelper::LEGACY_FRONTEND_ENTRY.'?')) {
+    				$url = CBrandHelper::FRONTEND_ENTRY
         			. substr($url, strlen(CBrandHelper::LEGACY_FRONTEND_ENTRY));
 			}
 
