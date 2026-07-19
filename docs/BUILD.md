@@ -19,6 +19,16 @@ Other Linux distributions may work but are not officially verified.
 
 ---
 
+## Git Clone
+
+```
+git clone git@github.com:oirtstut/coirtx.git
+git checkout branding/coirtx
+
+
+```
+---
+
 ## Build Dependencies
 
 ### Core Build Tools
@@ -157,6 +167,25 @@ sudo vi /etc/php/8.5/cli/php.ini
 Set:
 
 ```ini
+; Maximum execution time of each script, in seconds
+max_execution_time = 300
+
+; Maximum amount of time each script may spend parsing input data
+max_input_time = 300
+
+; Maximum amount of memory a script may consume
+memory_limit = 256M
+
+; Maximum size of POST data
+post_max_size = 16M
+
+; Maximum allowed size for uploaded files
+upload_max_filesize = 2M
+
+; Maximum number of input variables
+max_input_vars = 10000
+
+; Timezone
 date.timezone = Asia/Kolkata
 ```
 
@@ -178,8 +207,21 @@ sudo -u postgres psql
 
 ```sql
 CREATE USER coirtx WITH PASSWORD 'change_me';
-CREATE DATABASE coirtx OWNER coirtx;
+CREATE DATABASE coirtx OWNER coirtx ENCODING 'UTF8';
+GRANT ALL PRIVILEGES ON DATABASE coirtx TO coirtx;
+
 \q
+```
+
+modifying zabbix_server.conf file
+```
+/etc/coirtx/zabbix_server.conf
+
+DBHost=localhost
+DBName=coirtx
+DBUser=coirtx
+DBPassword=change_me
+
 ```
 
 ---
