@@ -26,7 +26,7 @@ class CBrandHelper {
 	const BRAND_CONFIG_FILE_PATH = '/../../../local/conf/brand.conf.php';
 
 	public const LEGACY_FRONTEND_ENTRY = 'zabbix.php';
-	public const FRONTEND_ENTRY = 'zabbix.php';
+	public const FRONTEND_ENTRY = 'coirtx.php';
 
 	/**
 	 * Brand configuration array.
