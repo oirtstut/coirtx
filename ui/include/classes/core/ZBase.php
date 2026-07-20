@@ -177,7 +177,17 @@ class ZBase {
 		switch ($mode) {
 			case self::EXEC_MODE_DEFAULT:
 				$file = basename($_SERVER['SCRIPT_NAME']);
-				$action_name = ($file === 'zabbix.php') ? getRequest('action', '') : $file;
+
+				if ($file === CBrandHelper::FRONTEND_ENTRY
+				        || $file === CBrandHelper::LEGACY_FRONTEND_ENTRY) {
+					action_name = getRequest('action', '');
+				}
+				else {
+				    $action_name = $file;
+				}
+
+				/* $file = basename($_SERVER['SCRIPT_NAME']); */
+				/* $action_name = ($file === 'zabbix.php') ? getRequest('action', '') : $file; */
 
 				if ($action_name === 'notifications.get') {
 					CWebUser::disableSessionExtension();
