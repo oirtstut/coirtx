@@ -18,8 +18,6 @@ LOGDIR="/var/log/${APP_NAME}"
 LIBDIR="/var/lib/${APP_NAME}"
 RUNDIR="/run/${APP_NAME}"
 
-SYSTEMD_SERVICE="${APP_NAME}-server.service"
-
 NGINX_AVAILABLE="/etc/nginx/sites-available/${APP_NAME}"
 NGINX_ENABLED="/etc/nginx/sites-enabled/${APP_NAME}"
 
@@ -56,9 +54,15 @@ read -rp "Continue? (yes/no): " ANSWER
 ###############################################################################
 
 echo
-echo "Stopping services..."
+echo "Stopping Coirtx services..."
 
-sudo systemctl stop "${SYSTEMD_SERVICE}" 2>/dev/null || true
+for service in /etc/systemd/system/${APP_NAME}*.service; do
+    [ -e "$service" ] || continue
+
+    unit=$(basename "$service")
+
+    sudo systemctl stop "$unit" 2>/dev/null || true
+done
 
 sudo pkill zabbix_server 2>/dev/null || true
 sudo pkill zabbix_proxy 2>/dev/null || true
@@ -102,12 +106,18 @@ sudo nginx -t && sudo systemctl reload nginx || true
 ###############################################################################
 
 echo
-echo "Removing systemd service..."
+echo "Removing systemd services..."
 
-sudo systemctl disable "${SYSTEMD_SERVICE}" 2>/dev/null || true
+for service in /etc/systemd/system/${APP_NAME}*.service; do
+    [ -e "$service" ] || continue
 
-sudo rm -f "/etc/systemd/system/${SYSTEMD_SERVICE}"
-sudo rm -f "/etc/systemd/system/multi-user.target.wants/${SYSTEMD_SERVICE}"
+    unit=$(basename "$service")
+
+    sudo systemctl disable "$unit" 2>/dev/null || true
+    sudo rm -f "$service"
+done
+
+sudo rm -f /etc/systemd/system/multi-user.target.wants/${APP_NAME}*.service
 
 sudo systemctl daemon-reload
 sudo systemctl reset-failed
