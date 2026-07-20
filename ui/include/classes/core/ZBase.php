@@ -180,7 +180,7 @@ class ZBase {
 
 				if ($file === CBrandHelper::FRONTEND_ENTRY
 				        || $file === CBrandHelper::LEGACY_FRONTEND_ENTRY) {
-					action_name = getRequest('action', '');
+					$action_name = getRequest('action', '');
 				}
 				else {
 				    $action_name = $file;
