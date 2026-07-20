@@ -39,17 +39,17 @@ WARN=0
 
 pass() {
     echo -e "${GREEN}[PASS]${RESET} $1"
-    ((PASS++))
+    ((++PASS))
 }
 
 fail() {
     echo -e "${RED}[FAIL]${RESET} $1"
-    ((FAIL++))
+    ((++FAIL))
 }
 
 warn() {
     echo -e "${YELLOW}[WARN]${RESET} $1"
-    ((WARN++))
+    ((++WARN))
 }
 
 section() {
